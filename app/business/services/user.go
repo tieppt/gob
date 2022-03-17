@@ -51,7 +51,7 @@ func CreateResponseToken(dbUser models.User) (*dto.LoginResponseDto, error) {
 
 	return &dto.LoginResponseDto{
 		Token:    token,
-		ExpireAt: jwtToken.Claims.(*jwt.StandardClaims).ExpiresAt,
+		ExpireAt: jwtToken.Claims.(*jwt.RegisteredClaims).ExpiresAt.Unix(),
 	}, nil
 }
 

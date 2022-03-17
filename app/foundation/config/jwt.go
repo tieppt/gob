@@ -10,12 +10,12 @@ import (
 var SigningKey []byte
 
 func CreateJWTToken(Issuer string) (*jwt.Token, string, error) {
-	expiresAt := time.Now().Add(time.Hour * 24).Unix()
+	expiresAt := time.Now().Add(time.Hour * 24)
 	// Create the Claims
-	claims := &jwt.StandardClaims{
-		ExpiresAt: expiresAt,
+	claims := &jwt.RegisteredClaims{
+		ExpiresAt: jwt.NewNumericDate(expiresAt),
 		Issuer:    Issuer,
-		Id:        uuid.NewString(),
+		ID:        uuid.NewString(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
