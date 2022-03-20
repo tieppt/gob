@@ -32,10 +32,12 @@ func CreateUser(user *dto.UserRegisterDto) (*models.User, error) {
 func Login(user *dto.UserLoginDto) (*dto.LoginResponseDto, error) {
 	var dbUser models.User
 	result := database.DBInst.DB.Where("username = ?", user.Username).First(&dbUser)
-	if result.Error != nil {
-		return nil, result.Error
+	// To prevent timing attack, we always compare 2 passwords
+	storedPassword := ""
+	if result.Error == nil {
+		storedPassword = dbUser.Password
 	}
-	err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
+	err := bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(user.Password))
 	if err != nil {
 		return nil, err
 	}

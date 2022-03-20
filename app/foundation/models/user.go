@@ -11,5 +11,6 @@ type User struct {
 	Username string    `gorm:"type:varchar(255);uniqueIndex"`
 	Email    string    `gorm:"type:varchar(255);uniqueIndex"`
 	Password string    `gorm:"type:text" json:"-"`
+	Locked   bool      `gorm:"type:boolean;default:false"`
 	Posts    []Post
 }
