@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -19,12 +20,12 @@ func GetCurrentUser(c *fiber.Ctx) error {
 
 	if err != nil {
 		response := dto.GenericErrorResponse{
-			Status:  500,
+			Status:  http.StatusInternalServerError,
 			Message: "Something went wrong",
 		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			response = dto.GenericErrorResponse{
-				Status:  404,
+				Status:  http.StatusNotFound,
 				Message: "User not found",
 			}
 		}

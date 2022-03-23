@@ -6,6 +6,7 @@ import (
 	"github.com/tieppt/gob/app/business/dto"
 	"github.com/tieppt/gob/app/foundation/config"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 func NewJWTMiddleware(logger *zap.Logger) fiber.Handler {
@@ -19,7 +20,7 @@ func jwtErrorHandler(logger *zap.Logger) fiber.ErrorHandler {
 	return func(c *fiber.Ctx, err error) error {
 		logger.Error("JWT Error", zap.Error(err))
 		response := dto.GenericErrorResponse{
-			Status:  401,
+			Status:  http.StatusUnauthorized,
 			Message: err.Error(),
 		}
 		return c.Status(response.Status).JSON(response)

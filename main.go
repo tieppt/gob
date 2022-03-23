@@ -21,7 +21,8 @@ func main() {
 	app := fiber.New()
 
 	web.SetupRoutes(app, logger)
+	web.SetupCORS(app, logger)
 
 	sugar.Infof("start app at: %v", config.Conf.Port)
-	app.Listen(":" + config.Conf.Port)
+	sugar.Error(app.Listen(":" + config.Conf.Port))
 }

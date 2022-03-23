@@ -5,13 +5,14 @@ import (
 	"github.com/tieppt/gob/app/business/dto"
 	"github.com/tieppt/gob/app/business/services"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 func Register(c *fiber.Ctx) error {
 	var user dto.UserRegisterDto
 	if err := c.BodyParser(&user); err != nil {
 		response := dto.GenericErrorResponse{
-			Status:  400,
+			Status:  http.StatusBadRequest,
 			Message: "Invalid or missing data",
 		}
 		return c.Status(response.Status).JSON(response)
@@ -21,7 +22,7 @@ func Register(c *fiber.Ctx) error {
 
 	if err != nil {
 		response := dto.GenericErrorResponse{
-			Status:  500,
+			Status:  http.StatusInternalServerError,
 			Message: "Can not create user",
 		}
 		return c.Status(response.Status).JSON(response)
@@ -30,14 +31,15 @@ func Register(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
-func Login(logger *zap.Logger) func(*fiber.Ctx) error {
+func Login(logger *zap.Logger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var user dto.UserLoginDto
 		if err := c.BodyParser(&user); err != nil {
 			response := dto.GenericErrorResponse{
-				Status:  400,
+				Status:  http.StatusBadRequest,
 				Message: "Invalid or missing data",
 			}
+			logger.Error("Invalid or missing data", zap.Error(err))
 			return c.Status(response.Status).JSON(response)
 		}
 
@@ -45,9 +47,10 @@ func Login(logger *zap.Logger) func(*fiber.Ctx) error {
 
 		if err != nil {
 			response := dto.GenericErrorResponse{
-				Status:  401,
+				Status:  http.StatusUnauthorized,
 				Message: "Wrong username or password",
 			}
+			logger.Error("Wrong username or password", zap.Error(err))
 			return c.Status(response.Status).JSON(response)
 		}
 
